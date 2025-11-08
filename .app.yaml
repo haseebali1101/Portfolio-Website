@@ -1,0 +1,18 @@
+# App Engine configuration (Alternative deployment option)
+runtime: custom
+env: flex
+
+# Resources
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 10
+
+# Automatic scaling
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 10
+  cool_down_period_sec: 120s
+  cpu_utilization:
+    target_utilization: 0.6
+
