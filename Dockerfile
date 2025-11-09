@@ -18,7 +18,15 @@ COPY . .
 RUN npm run build
 
 # Verify build output
-RUN ls -la dist/ || (echo "Build failed - dist directory not found" && exit 1)
+RUN echo "=== Build verification ===" && \
+    ls -la dist/ && \
+    echo "=== Checking index.html ===" && \
+    test -f dist/index.html && echo "✅ index.html found" || (echo "❌ index.html missing" && exit 1) && \
+    echo "=== Checking assets ===" && \
+    (test -d dist/assets && echo "✅ assets directory found" && ls -la dist/assets/ | head -10 || echo "⚠️ No assets directory") && \
+    echo "=== Build files ===" && \
+    find dist -type f | head -10 && \
+    echo "✅ Build verification complete"
 
 # Stage 2: Serve the application with nginx
 FROM nginx:alpine
@@ -28,6 +36,16 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Verify nginx configuration and files
+RUN echo "=== Verifying nginx setup ===" && \
+    nginx -t && \
+    echo "✅ Nginx config valid" && \
+    echo "=== Files in nginx html ===" && \
+    ls -la /usr/share/nginx/html/ && \
+    echo "=== Verifying index.html ===" && \
+    test -f /usr/share/nginx/html/index.html && echo "✅ index.html in place" || (echo "❌ index.html missing!" && exit 1) && \
+    echo "✅ All files verified"
 
 # Expose port 8080 (Google Cloud Run default)
 EXPOSE 8080

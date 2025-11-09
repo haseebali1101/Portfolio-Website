@@ -10,7 +10,7 @@ import {
   FaChartBar,
 } from 'react-icons/fa'
 import {
-  SiPowerbi,
+  SiMicrosoftpowerbi,
   SiSap,
   SiMicrosoftoffice,
 } from 'react-icons/si'
